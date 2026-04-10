@@ -1,0 +1,17 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.vscode
+.trae
+.env
+.env.*
+!.env.production
+!.env.example
+lint_report.txt
+*.html
+scripts/
+docker-compose.yml

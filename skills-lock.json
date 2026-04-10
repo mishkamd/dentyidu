@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "geo-multilingual-optimizer": {
+      "source": "geoly-ai/geo-skills",
+      "sourceType": "github",
+      "computedHash": "8aad23cb49b3720b0f4b97bccf51be4788554cf1c36f46ba3dbae89f533d7640"
+    },
+    "security-nextjs": {
+      "source": "igorwarzocha/opencode-workflows",
+      "sourceType": "github",
+      "computedHash": "32680026ede6e112e0bf4ce92b2c0a076770daebdaef7b19c9dbcd08f1aea02d"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "507f011a70e8b3ae242bdc0bb5b39fd91a1d4049a0f3c281991ccf84973d591c"
+    },
+    "skill-creator": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "fd898636b390bba0c0a2d21a04215d20513478353617875fade74ca539384926"
+    }
+  }
+}
