@@ -96,16 +96,25 @@ pm2 startup
 | Variabilă | Obligatorie | Descriere |
 |-----------|------------|-----------|
 | `DATABASE_URL` | ✅ | Connection string PostgreSQL |
-| `NODE_ENV` | ✅ | `production` pentru deploy |
+| `SESSION_SECRET` | ✅ | Cheie secretă sesiuni (min. 32 caractere) |
+| `NODE_ENV` | ✅ | Hardcodat `production` în docker-compose |
 | `POSTGRES_USER` | Docker | User PostgreSQL (docker-compose) |
 | `POSTGRES_PASSWORD` | Docker | Parola PostgreSQL (docker-compose) |
 | `POSTGRES_DB` | Docker | Numele bazei de date (docker-compose) |
-| `BLOB_READ_WRITE_TOKEN` | Opțional | Token Vercel Blob (dacă se folosește) |
+| `NEXT_PUBLIC_SITE_URL` | Recomandat | URL public pentru sitemap/OG tags (default: `https://dentymd.md`) |
+| `TELEGRAM_WEBHOOK_SECRET` | Opțional | Secret webhook Telegram (securizează `/api/telegram`) |
+| `NEXT_PUBLIC_SENTRY_DSN` | Opțional | DSN Sentry pentru error tracking |
+| `SEED_ADMIN_PASSWORD` | Seed | Parola admin la `prisma db seed` (default: `admin123`) |
 
-**Securitate parole:**
+> ⚠️ `SESSION_SECRET` și `DATABASE_URL` sunt obligatorii — `docker compose up` eșuează dacă lipsesc.
+
+**Generare secrete:**
 ```bash
-# Generează o parolă sigură
-openssl rand -base64 32
+# SESSION_SECRET
+openssl rand -hex 32
+
+# TELEGRAM_WEBHOOK_SECRET
+openssl rand -hex 24
 ```
 
 ---

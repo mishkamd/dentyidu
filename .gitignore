@@ -32,7 +32,8 @@
 /vibes-selection.*
 /design-system.generated.md
 /.github/
-
+/.vacode/
+skills-lock.json
 
 # debug
 npm-debug.log*

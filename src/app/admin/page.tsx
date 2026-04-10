@@ -284,16 +284,6 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 pb-8">
-      {/* Welcome Section */}
-      <div className="flex flex-col gap-1 text-center sm:text-left">
-        <h1 className="text-2xl md:text-3xl font-medium text-zinc-900 dark:text-white tracking-tight">
-          {(t["admin.dashboard.welcome"] || "Bine ai revenit, {name}!").replace("{name}", displayName)}
-        </h1>
-        <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400">
-          Ai <span className="text-emerald-600 dark:text-emerald-400 font-medium">{arrivals} pacienți internaționali</span> care sosesc în următoarele 48 de ore.
-        </p>
-      </div>
-
       {/* Stats Grid */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {/* Revenue Card */}
