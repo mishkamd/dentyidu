@@ -6,12 +6,6 @@ import { SITE_URL, SUPPORTED_LOCALES } from "@/lib/seo"
 export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await prisma.post.findMany({
-    where: { published: true },
-    select: { id: true, updatedAt: true },
-    orderBy: { updatedAt: "desc" },
-  })
-
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
@@ -50,12 +44,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${SITE_URL}/blog#${post.id}`,
-    lastModified: post.updatedAt,
-    changeFrequency: "monthly",
-    priority: 0.6,
-  }))
+  let blogEntries: MetadataRoute.Sitemap = []
+
+  // Keep sitemap generation alive even when DB is temporarily unavailable.
+  try {
+    const posts = await prisma.post.findMany({
+      where: { published: true },
+      select: { id: true, updatedAt: true },
+      orderBy: { updatedAt: "desc" },
+    })
+
+    blogEntries = posts.map((post) => ({
+      url: `${SITE_URL}/blog#${post.id}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }))
+  } catch {
+    blogEntries = []
+  }
 
   return [...staticPages, ...blogEntries]
 }

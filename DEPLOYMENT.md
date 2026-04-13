@@ -35,9 +35,12 @@
 ### 2.1 Cu Docker (Recomandat)
 
 ```bash
+# 0. Alege directorul proiectului (orice locație)
+PROJECT_DIR=/opt/dentyidu
+
 # 1. Clonează repo-ul
-git clone <repo-url> /opt/dentymd
-cd /opt/dentymd
+git clone <repo-url> "$PROJECT_DIR"
+cd "$PROJECT_DIR"
 
 # 2. Copiază și configurează variabilele de mediu
 cp .env.example .env
@@ -59,6 +62,9 @@ curl http://localhost:3001
 ### 2.2 Fără Docker
 
 ```bash
+# 0. Alege directorul proiectului (orice locație)
+PROJECT_DIR=/opt/dentyidu
+
 # 1. Instalează Node.js 20 LTS
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 sudo apt install -y nodejs
@@ -71,8 +77,8 @@ sudo -u postgres psql -c "CREATE USER dentymd WITH PASSWORD 'parola-sigura';"
 sudo -u postgres psql -c "CREATE DATABASE \"denty-app\" OWNER dentymd;"
 
 # 4. Clonează și configurează
-git clone <repo-url> /opt/dentymd
-cd /opt/dentymd
+git clone <repo-url> "$PROJECT_DIR"
+cd "$PROJECT_DIR"
 cp .env.example .env
 nano .env  # DATABASE_URL=postgresql://dentymd:parola-sigura@localhost:5432/denty-app?schema=public
 
@@ -95,7 +101,7 @@ pm2 startup
 
 | Variabilă | Obligatorie | Descriere |
 |-----------|------------|-----------|
-| `DATABASE_URL` | ✅ | Connection string PostgreSQL |
+| `DATABASE_URL` | ✅ | Connection string PostgreSQL (`postgres` host în Docker, `localhost` fără Docker) |
 | `SESSION_SECRET` | ✅ | Cheie secretă sesiuni (min. 32 caractere) |
 | `NODE_ENV` | ✅ | Hardcodat `production` în docker-compose |
 | `POSTGRES_USER` | Docker | User PostgreSQL (docker-compose) |
@@ -187,7 +193,8 @@ docker compose exec app npx prisma migrate deploy
 ## 6. Deploy Manual (fără Docker)
 
 ```bash
-cd /opt/dentymd
+PROJECT_DIR=/opt/dentyidu
+cd "$PROJECT_DIR"
 git pull origin main
 npm ci --production=false
 npx prisma generate
@@ -388,10 +395,10 @@ docker compose exec -T postgres pg_dump -U postgres denty-app > backup.sql
 ```bash
 # Adaugă în crontab (crontab -e)
 # Backup zilnic la 03:00, retenție 30 zile
-0 3 * * * /opt/dentymd/scripts/backup.sh
+0 3 * * * /opt/dentyidu/scripts/backup.sh
 
 # Backup săptămânal complet
-0 4 * * 0 /opt/dentymd/scripts/backup-full.sh
+0 4 * * 0 /opt/dentyidu/scripts/backup-full.sh
 ```
 
 Script backup:
@@ -399,15 +406,16 @@ Script backup:
 #!/bin/bash
 # scripts/backup.sh
 BACKUP_DIR="/opt/backups/dentymd"
+PROJECT_DIR="/opt/dentyidu"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 mkdir -p "$BACKUP_DIR"
 
 # Dump baza de date
-docker compose -f /opt/dentymd/docker-compose.yml exec -T postgres \
+docker compose -f "$PROJECT_DIR/docker-compose.yml" exec -T postgres \
   pg_dump -U postgres -Fc denty-app > "$BACKUP_DIR/db_$TIMESTAMP.dump"
 
 # Backup uploads
-tar czf "$BACKUP_DIR/uploads_$TIMESTAMP.tar.gz" -C /opt/dentymd src/app/image/ public/uploads/ 2>/dev/null || true
+tar czf "$BACKUP_DIR/uploads_$TIMESTAMP.tar.gz" -C "$PROJECT_DIR" src/app/image/ public/uploads/ 2>/dev/null || true
 
 # Retenție 30 zile
 find "$BACKUP_DIR" -name "*.dump" -mtime +30 -delete
@@ -419,6 +427,8 @@ echo "[$(date)] Backup completat: db_$TIMESTAMP.dump"
 ### 10.3 Restore
 
 ```bash
+PROJECT_DIR=/opt/dentyidu
+
 # Din dump custom format
 docker compose exec -T postgres pg_restore -U postgres -d denty-app --clean --if-exists < backup.dump
 
@@ -426,7 +436,7 @@ docker compose exec -T postgres pg_restore -U postgres -d denty-app --clean --if
 docker compose exec -T postgres psql -U postgres -d denty-app < backup.sql
 
 # Restore uploads
-tar xzf uploads_TIMESTAMP.tar.gz -C /opt/dentymd/
+tar xzf uploads_TIMESTAMP.tar.gz -C "$PROJECT_DIR"/
 ```
 
 ### 10.4 Test restore (lunar)
@@ -478,7 +488,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /opt/dentymd
+            PROJECT_DIR=/opt/dentyidu
+            cd "$PROJECT_DIR"
             bash scripts/deploy.sh
 ```
 
