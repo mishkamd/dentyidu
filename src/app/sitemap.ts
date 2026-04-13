@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next"
 import { prisma } from "@/lib/prisma"
 import { SITE_URL, SUPPORTED_LOCALES } from "@/lib/seo"
 
+// Prevent static prerender at build time — DB is not available during Docker build
+export const dynamic = 'force-dynamic'
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await prisma.post.findMany({
     where: { published: true },
